@@ -1,0 +1,22 @@
+{
+  "jaiak": [
+    {
+      "id": 1,
+      "izena": "Aste Nagusia",
+      "hiria": "Bilbo",
+      "probintzia": "Bizkaia",
+      "hasiera": "2025-08-16",
+      "amaiera": "2025-08-24",
+      "deskribapena": "Bilboko jai nagusiak, munduko jairik handienetakoa."
+    },
+    {
+      "id": 2,
+      "izena": "San Fermin",
+      "hiria": "Iruñea",
+      "probintzia": "Nafarroa",
+      "hasiera": "2025-07-06",
+      "amaiera": "2025-07-14",
+      "deskribapena": "Iruñeako jai ospetsuenak, entzierruagatik ezagunak."
+    }
+  ]
+}
