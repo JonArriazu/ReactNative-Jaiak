@@ -90,7 +90,6 @@ const ekainaRows = [
   ["Tuterako Lourdes Auzoko San Juan Jaiak 2026", "Tutera / Tudela", "Lourdes auzoa", "Nafarroa", "2026-06-15", "2026-06-21", "Ekainaren erdialdeko jaiak. Data zehatza baieztatzeko dago."],
   ["Azpilagañako Jaiak 2026", "Iruña / Pamplona", "Azpilagaña", "Nafarroa", "2026-06-18", "2026-06-21"],
   ["Donibaneko Jaiak 2026", "Iruña / Pamplona", "Donibane / San Juan", "Nafarroa", "2026-06-19", "2026-06-21"],
-  ["Iruñeko San Juan 2026", "Iruña / Pamplona", "Iruña / Pamplona", "Nafarroa", "2026-06-23", "2026-06-23", "San Juan suak auzo ezberdinetan. Errotxapea eta Donibane auzoetakoak nabarmentzen dira."],
   ["Altsasuko San Juan 2026", "Altsasu / Alsasua", "Altsasu / Alsasua", "Nafarroa", "2026-06-23", "2026-06-23", "San Juan. Zortziko dantza tradizionala ospatzen da."],
 ];
 

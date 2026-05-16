@@ -1,3 +1,6 @@
+export const colorJaiApp = "#009B48";
+export const colorJaiAppClaro = "#E6F7EF";
+
 export const PROVINCES = [
   "Araba",
   "Bizkaia",

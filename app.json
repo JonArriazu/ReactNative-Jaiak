@@ -24,6 +24,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "JaiApp necesita tu ubicación para mostrarte en el mapa.",
+          "locationAlwaysAndWhenInUsePermission": "JaiApp necesita tu ubicación para mostrarte en el mapa."
+        }
+      ]
+    ]
   }
 }

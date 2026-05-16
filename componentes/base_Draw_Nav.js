@@ -23,11 +23,19 @@ const Drawer = createDrawerNavigator();
 
 function BotonMenu(props) {
     return (
-        <Pressable onPress={props.onPress} hitSlop={8}>
+        <Pressable
+            onPress={props.onPress}
+            hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+            style={({ pressed }) => ({
+                padding: 8,
+                marginLeft: 4,
+                opacity: pressed ? 0.6 : 1,
+            })}
+        >
             <MaterialCommunityIcons
                 name="menu"
-                size={40}
-                color={Platform.OS === 'ios' ? colorJaiApp : 'white'}
+                size={32}
+                color="white"
             />
         </Pressable>
     );
