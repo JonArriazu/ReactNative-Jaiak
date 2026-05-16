@@ -107,6 +107,14 @@ class Campobase extends Component {
                 component={Buscador}
                 options={({ navigation }) => this.menuHeaderOptions('Bilatzailea', navigation)}
             />
+            <Stack.Screen
+                name="DetalleJaiBuscador"
+                component={DetalleJai}
+                options={({ route }) => ({
+                    title: route.params?.jai?.city || 'Xehetasunak',
+                    headerBackTitle: 'Atzera',
+                })}
+            />
         </Stack.Navigator>
     );
 
