@@ -158,8 +158,7 @@ export default function Mapa() {
     const [ubicacion, setUbicacion] = useState(null);
     const [cargando, setCargando]   = useState(true);
     const [filtro, setFiltro]       = useState('denak');
-    const [region, setRegion]       = useState(REGION_EUSKAL_HERRIA);
-    const [seleccion, setSeleccion] = useState(null); // { type:'single'|'cluster', ... }
+    const [seleccion, setSeleccion] = useState(null);
 
     const favoritosIds = useSelector(s => s.favoritos.favoritos);
 
@@ -173,9 +172,6 @@ export default function Mapa() {
             coords: getCoordenadas(j.area, j.city, j.province),
         }));
     }, [filtro, favoritosIds]);
-
-    // Calcular clusters al cambiar región o marcadores
-    const clusters = useMemo(() => computeClusters(markers, region), [markers, region]);
 
     useEffect(() => { solicitarUbicacion(); }, []);
 
@@ -213,10 +209,7 @@ export default function Mapa() {
         ? { latitude: ubicacion.latitude, longitude: ubicacion.longitude, latitudeDelta: 0.3, longitudeDelta: 0.3 }
         : REGION_EUSKAL_HERRIA;
 
-    const panelVisible = !!seleccion;
-    const gpsBottom = panelVisible
-        ? (seleccion.type === 'cluster' ? SCREEN_H * 0.42 : 160)
-        : (Platform.OS === 'ios' ? 40 : 24);
+    const gpsBottom = seleccion ? 160 : (Platform.OS === 'ios' ? 40 : 24);
 
     return (
         <View style={styles.container}>
@@ -228,30 +221,16 @@ export default function Mapa() {
                 showsUserLocation={true}
                 showsMyLocationButton={false}
                 showsCompass={true}
-                onRegionChangeComplete={r => setRegion(r)}
                 onPress={() => setSeleccion(null)}
             >
-                {clusters.map((cl, i) =>
-                    cl.type === 'single' ? (
-                        <Marker
-                            key={cl.item.id}
-                            coordinate={cl.coords}
-                            pinColor={PROVINCE_COLORS[cl.item.province] || colorJaiApp}
-                            onPress={e => { e.stopPropagation(); setSeleccion(cl); }}
-                        />
-                    ) : (
-                        <Marker
-                            key={`cluster-${i}-${cl.count}-${cl.color}`}
-                            coordinate={cl.coords}
-                            anchor={{ x: 0.5, y: 1 }}
-                            tracksViewChanges={false}
-                            zIndex={10}
-                            onPress={e => { e.stopPropagation(); setSeleccion(cl); }}
-                        >
-                            <ClusterMarker count={cl.count} color={cl.color} />
-                        </Marker>
-                    )
-                )}
+                {markers.map(j => (
+                    <Marker
+                        key={j.id}
+                        coordinate={j.coords}
+                        pinColor={PROVINCE_COLORS[j.province] || colorJaiApp}
+                        onPress={e => { e.stopPropagation(); setSeleccion({ type: 'single', item: j }); }}
+                    />
+                ))}
             </MapView>
 
             {/* Toggle */}
@@ -271,9 +250,9 @@ export default function Mapa() {
                     <PanelUno item={seleccion.item} onCerrar={() => setSeleccion(null)} />
                 </View>
             )}
-            {seleccion?.type === 'cluster' && (
+            {false && (
                 <View style={styles.panelWrapper}>
-                    <PanelLista items={seleccion.items} onCerrar={() => setSeleccion(null)} />
+                    <PanelLista items={[]} onCerrar={() => setSeleccion(null)} />
                 </View>
             )}
 

@@ -12,6 +12,7 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Home from './HomeComponent';
+import DetalleJai from './DetalleJaiComponent';
 import Buscador from './BuscadorComponent';
 import Mapa from './MapaComponent';
 import Egutegia from './EgutegiaComponent';
@@ -81,6 +82,14 @@ class Campobase extends Component {
                 component={Home}
                 options={({ navigation }) => this.menuHeaderOptions('JaiApp', navigation)}
             />
+            <Stack.Screen
+                name="DetalleJai"
+                component={DetalleJai}
+                options={({ route }) => ({
+                    title: route.params?.jai?.city || 'Xehetasunak',
+                    headerBackTitle: 'Atzera',
+                })}
+            />
         </Stack.Navigator>
     );
 
@@ -148,6 +157,14 @@ class Campobase extends Component {
                 name="GogokoenScreen"
                 component={Gogokoak}
                 options={({ navigation }) => this.menuHeaderOptions('Gogokoak', navigation)}
+            />
+            <Stack.Screen
+                name="DetalleJaiGogokoak"
+                component={DetalleJai}
+                options={({ route }) => ({
+                    title: route.params?.jai?.city || 'Xehetasunak',
+                    headerBackTitle: 'Atzera',
+                })}
             />
         </Stack.Navigator>
     );
