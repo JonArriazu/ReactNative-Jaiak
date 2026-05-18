@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DrawerActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -70,6 +69,19 @@ class Campobase extends Component {
         ),
     });
 
+    detalleOptions = ({ route }) => ({
+        title: route.params?.jai?.city || 'Xehetasunak',
+        headerBackTitle: 'Atzera',
+        headerStyle: {
+            backgroundColor: colorJaiApp,
+        },
+        headerTintColor: 'white',
+        headerTitleStyle: {
+            color: 'white',
+            fontWeight: 'bold',
+        },
+    });
+
     HasieraNavegador = () => (
         <Stack.Navigator>
             <Stack.Screen
@@ -82,18 +94,7 @@ class Campobase extends Component {
             <Stack.Screen
                 name="DetalleJai"
                 component={DetalleJai}
-                options={({ route }) => ({
-                    title: route.params?.jai?.city || 'Xehetasunak',
-                    headerBackTitle: 'Atzera',
-                    headerStyle: {
-                        backgroundColor: colorJaiApp,
-                    },
-                    headerTintColor: 'white',
-                    headerTitleStyle: {
-                        color: 'white',
-                        fontWeight: 'bold',
-                    },
-                })}
+                options={this.detalleOptions}
             />
         </Stack.Navigator>
     );
@@ -119,6 +120,11 @@ class Campobase extends Component {
                     this.menuHeaderOptions('Egutegia', navigation)
                 }
             />
+            <Stack.Screen
+                name="DetalleJai"
+                component={DetalleJai}
+                options={this.detalleOptions}
+            />
         </Stack.Navigator>
     );
 
@@ -134,18 +140,7 @@ class Campobase extends Component {
             <Stack.Screen
                 name="DetalleJai"
                 component={DetalleJai}
-                options={({ route }) => ({
-                    title: route.params?.jai?.city || 'Xehetasunak',
-                    headerBackTitle: 'Atzera',
-                    headerStyle: {
-                        backgroundColor: colorJaiApp,
-                    },
-                    headerTintColor: 'white',
-                    headerTitleStyle: {
-                        color: 'white',
-                        fontWeight: 'bold',
-                    },
-                })}
+                options={this.detalleOptions}
             />
         </Stack.Navigator>
     );
