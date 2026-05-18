@@ -32,6 +32,12 @@
           "locationWhenInUsePermission": "JaiApp necesita tu ubicación para mostrarte en el mapa.",
           "locationAlwaysAndWhenInUsePermission": "JaiApp necesita tu ubicación para mostrarte en el mapa."
         }
+      ],
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "JaiApp necesita acceso al calendario para guardar fiestas."
+        }
       ]
     ]
   }

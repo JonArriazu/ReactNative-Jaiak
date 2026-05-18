@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Platform, View, StyleSheet, Text, Pressable } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainer, DrawerActions } from '@react-navigation/native';
@@ -13,10 +13,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Home from './HomeComponent';
 import DetalleJai from './DetalleJaiComponent';
-import Buscador from './BuscadorComponent';
 import Mapa from './MapaComponent';
 import Egutegia from './EgutegiaComponent';
 import Gogokoak from './GogokoenComponent';
+
 import { colorJaiApp, colorJaiAppClaro } from '../comun/comun';
 
 const Stack = createNativeStackNavigator();
@@ -25,19 +25,14 @@ const Drawer = createDrawerNavigator();
 function BotonMenu(props) {
     return (
         <Pressable
-            onPress={props.onPress}
-            hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
             style={({ pressed }) => ({
                 padding: 8,
                 marginLeft: 4,
                 opacity: pressed ? 0.6 : 1,
             })}
+            onPress={props.onPress}
         >
-            <MaterialCommunityIcons
-                name="menu"
-                size={32}
-                color="white"
-            />
+            <MaterialCommunityIcons name="menu" size={28} color="white" />
         </Pressable>
     );
 }
@@ -45,15 +40,14 @@ function BotonMenu(props) {
 function CustomDrawerContent(props) {
     return (
         <DrawerContentScrollView {...props}>
-            <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
-                <View style={styles.drawerHeader}>
-                    <View style={styles.drawerHeaderTextContainer}>
-                        <Text style={styles.drawerHeaderText}>JaiApp</Text>
-                        <Text style={styles.drawerHeaderSubtext}>Euskal Herriko Jaiak</Text>
-                    </View>
+            <View style={styles.drawerHeader}>
+                <View style={styles.drawerHeaderTextContainer}>
+                    <Text style={styles.drawerHeaderText}>JaiApp</Text>
+                    <Text style={styles.drawerHeaderSubtext}>Euskal Herriko Jaiak</Text>
                 </View>
-                <DrawerItemList {...props} />
-            </SafeAreaView>
+            </View>
+
+            <DrawerItemList {...props} />
         </DrawerContentScrollView>
     );
 }
@@ -61,6 +55,14 @@ function CustomDrawerContent(props) {
 class Campobase extends Component {
     menuHeaderOptions = (title, navigation) => ({
         title,
+        headerStyle: {
+            backgroundColor: colorJaiApp,
+        },
+        headerTintColor: 'white',
+        headerTitleStyle: {
+            color: 'white',
+            fontWeight: 'bold',
+        },
         headerLeft: () => (
             <BotonMenu
                 onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
@@ -69,18 +71,13 @@ class Campobase extends Component {
     });
 
     HasieraNavegador = () => (
-        <Stack.Navigator
-            initialRouteName="HasieraScreen"
-            screenOptions={{
-                headerTintColor: '#fff',
-                headerStyle: { backgroundColor: colorJaiApp },
-                headerTitleStyle: { color: '#fff' },
-            }}
-        >
+        <Stack.Navigator>
             <Stack.Screen
-                name="HasieraScreen"
+                name="HasieraPantaila"
                 component={Home}
-                options={({ navigation }) => this.menuHeaderOptions('JaiApp', navigation)}
+                options={({ navigation }) =>
+                    this.menuHeaderOptions('Hasiera', navigation)
+                }
             />
             <Stack.Screen
                 name="DetalleJai"
@@ -88,90 +85,66 @@ class Campobase extends Component {
                 options={({ route }) => ({
                     title: route.params?.jai?.city || 'Xehetasunak',
                     headerBackTitle: 'Atzera',
-                })}
-            />
-        </Stack.Navigator>
-    );
-
-    BuscadorNavegador = () => (
-        <Stack.Navigator
-            initialRouteName="BuscadorScreen"
-            screenOptions={{
-                headerTintColor: '#fff',
-                headerStyle: { backgroundColor: colorJaiApp },
-                headerTitleStyle: { color: '#fff' },
-            }}
-        >
-            <Stack.Screen
-                name="BuscadorScreen"
-                component={Buscador}
-                options={({ navigation }) => this.menuHeaderOptions('Bilatzailea', navigation)}
-            />
-            <Stack.Screen
-                name="DetalleJaiBuscador"
-                component={DetalleJai}
-                options={({ route }) => ({
-                    title: route.params?.jai?.city || 'Xehetasunak',
-                    headerBackTitle: 'Atzera',
+                    headerStyle: {
+                        backgroundColor: colorJaiApp,
+                    },
+                    headerTintColor: 'white',
+                    headerTitleStyle: {
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
                 })}
             />
         </Stack.Navigator>
     );
 
     MapaNavegador = () => (
-        <Stack.Navigator
-            initialRouteName="MapaScreen"
-            screenOptions={{
-                headerTintColor: '#fff',
-                headerStyle: { backgroundColor: colorJaiApp },
-                headerTitleStyle: { color: '#fff' },
-            }}
-        >
+        <Stack.Navigator>
             <Stack.Screen
-                name="MapaScreen"
+                name="MapaPantaila"
                 component={Mapa}
-                options={({ navigation }) => this.menuHeaderOptions('Mapa', navigation)}
+                options={({ navigation }) =>
+                    this.menuHeaderOptions('Mapa', navigation)
+                }
             />
         </Stack.Navigator>
     );
 
     EgutegiaNavegador = () => (
-        <Stack.Navigator
-            initialRouteName="EgutegiaScreen"
-            screenOptions={{
-                headerTintColor: '#fff',
-                headerStyle: { backgroundColor: colorJaiApp },
-                headerTitleStyle: { color: '#fff' },
-            }}
-        >
+        <Stack.Navigator>
             <Stack.Screen
-                name="EgutegiaScreen"
+                name="EgutegiaPantaila"
                 component={Egutegia}
-                options={({ navigation }) => this.menuHeaderOptions('Egutegia', navigation)}
+                options={({ navigation }) =>
+                    this.menuHeaderOptions('Egutegia', navigation)
+                }
             />
         </Stack.Navigator>
     );
 
     GogokoenNavegador = () => (
-        <Stack.Navigator
-            initialRouteName="GogokoenScreen"
-            screenOptions={{
-                headerTintColor: '#fff',
-                headerStyle: { backgroundColor: colorJaiApp },
-                headerTitleStyle: { color: '#fff' },
-            }}
-        >
+        <Stack.Navigator>
             <Stack.Screen
-                name="GogokoenScreen"
+                name="GogokoakPantaila"
                 component={Gogokoak}
-                options={({ navigation }) => this.menuHeaderOptions('Gogokoak', navigation)}
+                options={({ navigation }) =>
+                    this.menuHeaderOptions('Gogokoak', navigation)
+                }
             />
             <Stack.Screen
-                name="DetalleJaiGogokoak"
+                name="DetalleJai"
                 component={DetalleJai}
                 options={({ route }) => ({
                     title: route.params?.jai?.city || 'Xehetasunak',
                     headerBackTitle: 'Atzera',
+                    headerStyle: {
+                        backgroundColor: colorJaiApp,
+                    },
+                    headerTintColor: 'white',
+                    headerTitleStyle: {
+                        color: 'white',
+                        fontWeight: 'bold',
+                    },
                 })}
             />
         </Stack.Navigator>
@@ -183,7 +156,10 @@ class Campobase extends Component {
             drawerContent={(props) => <CustomDrawerContent {...props} />}
             screenOptions={{
                 headerShown: false,
-                drawerStyle: { backgroundColor: colorJaiAppClaro },
+                drawerStyle: {
+                    backgroundColor: colorJaiAppClaro,
+                },
+                drawerActiveTintColor: colorJaiApp,
             }}
         >
             <Drawer.Screen
@@ -191,43 +167,45 @@ class Campobase extends Component {
                 component={this.HasieraNavegador}
                 options={{
                     drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="home" color={color} size={size} />
+                        <MaterialCommunityIcons name="home" size={size} color={color} />
                     ),
                 }}
             />
-            <Drawer.Screen
-                name="Bilatzailea"
-                component={this.BuscadorNavegador}
-                options={{
-                    drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="magnify" color={color} size={size} />
-                    ),
-                }}
-            />
+
             <Drawer.Screen
                 name="Mapa"
                 component={this.MapaNavegador}
                 options={{
                     drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="map-marker" color={color} size={size} />
+                        <MaterialCommunityIcons
+                            name="map-marker-radius"
+                            size={size}
+                            color={color}
+                        />
                     ),
                 }}
             />
+
             <Drawer.Screen
                 name="Egutegia"
                 component={this.EgutegiaNavegador}
                 options={{
                     drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="calendar" color={color} size={size} />
+                        <MaterialCommunityIcons
+                            name="calendar-month"
+                            size={size}
+                            color={color}
+                        />
                     ),
                 }}
             />
+
             <Drawer.Screen
                 name="Gogokoak"
                 component={this.GogokoenNavegador}
                 options={{
                     drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="heart" color={color} size={size} />
+                        <MaterialCommunityIcons name="heart" size={size} color={color} />
                     ),
                 }}
             />
@@ -236,22 +214,24 @@ class Campobase extends Component {
 
     render() {
         return (
-            <NavigationContainer>
-                <View
-                    style={{
-                        flex: 1,
-                        paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight,
-                    }}
-                >
+            <View
+                style={[
+                    styles.container,
+                    { paddingTop: Constants.statusBarHeight },
+                ]}
+            >
+                <NavigationContainer>
                     <this.DrawerNavegador />
-                </View>
-            </NavigationContainer>
+                </NavigationContainer>
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: {
+        flex: 1,
+    },
     drawerHeader: {
         backgroundColor: colorJaiApp,
         height: 100,
@@ -259,7 +239,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         marginBottom: 8,
     },
-    drawerHeaderTextContainer: { justifyContent: 'center' },
+    drawerHeaderTextContainer: {
+        justifyContent: 'center',
+    },
     drawerHeaderText: {
         color: 'white',
         fontSize: 28,
