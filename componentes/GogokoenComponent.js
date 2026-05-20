@@ -47,7 +47,7 @@ export default function Gogokoak({ navigation }) {
                             { backgroundColor: cardColor, borderLeftColor: provColor },
                             pressed && styles.cardPressed,
                         ]}
-                        onPress={() => navigation.navigate('DetalleJaiGogokoak', { jai: item })}
+                        onPress={() => navigation.navigate('DetalleJai', { jai: item })}
                     >
                         <View style={styles.cardHeader}>
                             <Text style={styles.name} numberOfLines={2}>{item.name}</Text>

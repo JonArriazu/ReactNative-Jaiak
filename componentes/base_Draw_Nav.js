@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 
 import Home from './HomeComponent';
+import Bilatzailea from './BilatzaileaComponent';
 import DetalleJai from './DetalleJaiComponent';
 import Mapa from './MapaComponent';
 import Egutegia from './EgutegiaComponent';
@@ -107,6 +108,23 @@ class Campobase extends Component {
         </Stack.Navigator>
     );
 
+    BilatzaileaNavegador = () => (
+        <Stack.Navigator>
+            <Stack.Screen
+                name="BilatzaileaPantaila"
+                component={Bilatzailea}
+                options={({ navigation }) =>
+                    this.menuHeaderOptions('Bilatzailea', navigation)
+                }
+            />
+            <Stack.Screen
+                name="DetalleJai"
+                component={DetalleJai}
+                options={this.detalleOptions}
+            />
+        </Stack.Navigator>
+    );
+
     MapaNavegador = () => (
         <Stack.Navigator>
             <Stack.Screen
@@ -172,6 +190,20 @@ class Campobase extends Component {
                     drawerIcon: ({ color, size }) => (
                         <MaterialCommunityIcons
                             name="home"
+                            size={size}
+                            color={color}
+                        />
+                    ),
+                }}
+            />
+
+            <Drawer.Screen
+                name="Bilatzailea"
+                component={this.BilatzaileaNavegador}
+                options={{
+                    drawerIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons
+                            name="magnify"
                             size={size}
                             color={color}
                         />

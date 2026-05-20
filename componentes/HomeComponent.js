@@ -1,15 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
-    FlatList,
-    Text,
     View,
+    Text,
     StyleSheet,
+    ScrollView,
     Pressable,
-    TextInput,
-    Platform,
 } from 'react-native';
-import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
+
 import { jaiak } from '../comun/jaiakDatak';
 import { formatBasqueDateRange } from '../comun/dateUtils';
 import {
@@ -20,184 +19,222 @@ import {
     colorJaiApp,
 } from '../comun/comun';
 
-const TODAS = 'Denak';
-const FILTROS = [TODAS, ...PROVINCES];
+function obtenerHoyTexto() {
+    return new Date().toISOString().split('T')[0];
+}
+
+function fiestaActivaEnFecha(jai, fechaTexto) {
+    const fecha = new Date(fechaTexto);
+    const inicio = new Date(jai.startDate);
+    const fin = new Date(jai.endDate || jai.startDate);
+
+    return inicio <= fecha && fin >= fecha;
+}
+
+function obtenerProximasJaiak() {
+    const hoy = obtenerHoyTexto();
+
+    return jaiak
+        .filter((jai) => jai.endDate >= hoy || jai.startDate >= hoy)
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+        .slice(0, 5);
+}
 
 export default function Home({ navigation }) {
-    const favoritosIds = useSelector(s => s.favoritos.favoritos);
+    const favoritosIds = useSelector((state) => state.favoritos.favoritos);
 
-    const [texto, setTexto] = useState('');
-    const [provincia, setProvincia] = useState(TODAS);
+    const jaiakHoy = useMemo(() => {
+        const hoy = obtenerHoyTexto();
+        return jaiak.filter((jai) => fiestaActivaEnFecha(jai, hoy));
+    }, []);
 
-    const resultados = useMemo(() => {
-        const q = texto.trim().toLowerCase();
+    const proximasJaiak = useMemo(() => obtenerProximasJaiak(), []);
 
-        return jaiak
-            .filter(j => {
-                const coincideProv = provincia === TODAS || j.province === provincia;
-
-                const coincideTexto =
-                    !q ||
-                    j.name.toLowerCase().includes(q) ||
-                    j.city.toLowerCase().includes(q) ||
-                    j.area.toLowerCase().includes(q);
-
-                return coincideProv && coincideTexto;
-            })
-            .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-    }, [texto, provincia]);
+    const abrirDrawer = (pantalla) => {
+        navigation.getParent()?.navigate(pantalla);
+    };
 
     return (
-        <View style={styles.container}>
-            <FlatList
-                data={resultados}
-                keyExtractor={item => item.id}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                    <View style={styles.header}>
-                        <Text style={styles.title}>JaiApp</Text>
-                        <Text style={styles.subtitle}>Euskal Herriko jaiak</Text>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+            <View style={styles.hero}>
+                <Text style={styles.heroTitulo}>JaiApp</Text>
+                <Text style={styles.heroSubtitulo}>
+                    Euskal Herriko jaiak aurkitu, gorde eta antolatu.
+                </Text>
+            </View>
 
-                        <View style={styles.searchBox}>
-                            <MaterialCommunityIcons
-                                name="magnify"
-                                size={20}
-                                color={COLORS.muted}
-                                style={styles.searchIcono}
-                            />
+            <View style={styles.quickGrid}>
+                <Pressable
+                    style={styles.quickCard}
+                    onPress={() => abrirDrawer('Egutegia')}
+                >
+                    <MaterialCommunityIcons
+                        name="calendar-month"
+                        size={30}
+                        color={colorJaiApp}
+                    />
+                    <Text style={styles.quickTitle}>Egutegia</Text>
+                    <Text style={styles.quickText}>Bilatu jaiak dataren arabera</Text>
+                </Pressable>
 
-                            <TextInput
-                                style={styles.searchInput}
-                                placeholder="Bilatu izena, herria…"
-                                placeholderTextColor={COLORS.muted}
-                                value={texto}
-                                onChangeText={setTexto}
-                                returnKeyType="search"
-                                clearButtonMode="while-editing"
-                                autoCorrect={false}
-                            />
+                <Pressable
+                    style={styles.quickCard}
+                    onPress={() => abrirDrawer('Mapa')}
+                >
+                    <MaterialCommunityIcons
+                        name="map-marker-radius"
+                        size={30}
+                        color={colorJaiApp}
+                    />
+                    <Text style={styles.quickTitle}>Mapa</Text>
+                    <Text style={styles.quickText}>Ikusi jaiak mapan</Text>
+                </Pressable>
 
-                            {texto.length > 0 && Platform.OS === 'android' && (
-                                <Pressable onPress={() => setTexto('')} hitSlop={8}>
-                                    <MaterialCommunityIcons
-                                        name="close-circle"
-                                        size={18}
-                                        color={COLORS.muted}
-                                    />
-                                </Pressable>
-                            )}
-                        </View>
+                <Pressable
+                    style={styles.quickCard}
+                    onPress={() => abrirDrawer('Bilatzailea')}
+                >
+                    <MaterialCommunityIcons
+                        name="magnify"
+                        size={30}
+                        color={colorJaiApp}
+                    />
+                    <Text style={styles.quickTitle}>Bilatzailea</Text>
+                    <Text style={styles.quickText}>Bilatu izenez edo herriz</Text>
+                </Pressable>
 
-                        <View style={styles.filtros}>
-                            {FILTROS.map(p => {
-                                const activo = provincia === p;
-                                const color =
-                                    p === TODAS
-                                        ? colorJaiApp
-                                        : PROVINCE_COLORS[p] || colorJaiApp;
+                <Pressable
+                    style={styles.quickCard}
+                    onPress={() => abrirDrawer('Gogokoak')}
+                >
+                    <MaterialCommunityIcons
+                        name="heart"
+                        size={30}
+                        color="#8E44AD"
+                    />
+                    <Text style={styles.quickTitle}>Gogokoak</Text>
+                    <Text style={styles.quickText}>
+                        {favoritosIds.length} jai gordeta
+                    </Text>
+                </Pressable>
+            </View>
 
-                                return (
-                                    <Pressable
-                                        key={p}
-                                        style={[
-                                            styles.chip,
-                                            activo && {
-                                                backgroundColor: color,
-                                                borderColor: color,
-                                            },
-                                        ]}
-                                        onPress={() => setProvincia(p)}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.chipTxt,
-                                                activo && styles.chipTxtActivo,
-                                            ]}
-                                        >
-                                            {p}
-                                        </Text>
-                                    </Pressable>
-                                );
-                            })}
-                        </View>
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Gaurko jaiak</Text>
+                    <Pressable onPress={() => abrirDrawer('Egutegia')}>
+                        <Text style={styles.sectionLink}>Egutegia ireki</Text>
+                    </Pressable>
+                </View>
 
-                        <Text style={styles.contador}>{resultados.length} emaitza</Text>
-                    </View>
-                }
-                ListEmptyComponent={
-                    <View style={styles.vacio}>
+                {jaiakHoy.length === 0 ? (
+                    <View style={styles.emptyBox}>
                         <MaterialCommunityIcons
-                            name="calendar-search"
-                            size={52}
-                            color="#ddd"
+                            name="calendar-remove"
+                            size={34}
+                            color={COLORS.muted}
                         />
-                        <Text style={styles.vacioTxt}>Ez da emaitzarik aurkitu</Text>
+                        <Text style={styles.emptyText}>
+                            Gaur ez dago jairik erregistratuta.
+                        </Text>
                     </View>
-                }
-                renderItem={({ item }) => {
-                    const provColor = PROVINCE_COLORS[item.province] || COLORS.primary;
-                    const cardColor = PROVINCE_LIGHT_COLORS[item.province] || COLORS.card;
-                    const esFav = favoritosIds.includes(item.id);
+                ) : (
+                    jaiakHoy.slice(0, 3).map((jai) => (
+                        <JaiCard
+                            key={jai.id}
+                            jai={jai}
+                            navigation={navigation}
+                        />
+                    ))
+                )}
+            </View>
 
-                    return (
-                        <Pressable
-                            style={({ pressed }) => [
-                                styles.card,
-                                {
-                                    backgroundColor: cardColor,
-                                    borderLeftColor: provColor,
-                                },
-                                pressed && styles.cardPressed,
-                            ]}
-                            onPress={() => navigation.navigate('DetalleJai', { jai: item })}
-                        >
-                            <View style={styles.cardHeader}>
-                                <Text style={styles.name} numberOfLines={2}>
-                                    {item.name}
-                                </Text>
+            <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Hurrengo jaiak</Text>
+                    <Pressable onPress={() => abrirDrawer('Bilatzailea')}>
+                        <Text style={styles.sectionLink}>Denak ikusi</Text>
+                    </Pressable>
+                </View>
 
-                                <View style={styles.cardHeaderRight}>
-                                    {esFav && (
-                                        <MaterialCommunityIcons
-                                            name="heart"
-                                            size={18}
-                                            color={provColor}
-                                            style={styles.heartIcon}
-                                        />
-                                    )}
+                {proximasJaiak.map((jai) => (
+                    <JaiCard
+                        key={jai.id}
+                        jai={jai}
+                        navigation={navigation}
+                    />
+                ))}
+            </View>
 
-                                    <View
-                                        style={[
-                                            styles.provinceBadge,
-                                            { backgroundColor: provColor },
-                                        ]}
-                                    >
-                                        <Text style={styles.provinceBadgeText}>
-                                            {item.province || 'Besteak'}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Probintziaren arabera</Text>
 
-                            <Text style={[styles.date, { color: provColor }]}>
-                                {formatBasqueDateRange(item.startDate, item.endDate)}
-                            </Text>
+                <View style={styles.provinceGrid}>
+                    {PROVINCES.map((province) => {
+                        const color = PROVINCE_COLORS[province] || colorJaiApp;
 
-                            <Text style={styles.place}>
-                                {item.area} · {item.city}
-                            </Text>
+                        return (
+                            <Pressable
+                                key={province}
+                                style={[
+                                    styles.provinceButton,
+                                    { borderColor: color },
+                                ]}
+                                onPress={() =>
+                                    navigation.getParent()?.navigate('Bilatzailea', {
+                                        screen: 'BilatzaileaPantaila',
+                                        params: { province },
+                                    })
+                                }
+                            >
+                                <View
+                                    style={[
+                                        styles.provinceDot,
+                                        { backgroundColor: color },
+                                    ]}
+                                />
+                                <Text style={styles.provinceText}>{province}</Text>
+                            </Pressable>
+                        );
+                    })}
+                </View>
+            </View>
+        </ScrollView>
+    );
+}
 
-                            {item.description ? (
-                                <Text style={styles.description} numberOfLines={2}>
-                                    {item.description}
-                                </Text>
-                            ) : null}
-                        </Pressable>
-                    );
-                }}
-            />
-        </View>
+function JaiCard({ jai, navigation }) {
+    const provColor = PROVINCE_COLORS[jai.province] || COLORS.primary;
+    const cardColor = PROVINCE_LIGHT_COLORS[jai.province] || COLORS.card;
+
+    return (
+        <Pressable
+            style={({ pressed }) => [
+                styles.card,
+                {
+                    backgroundColor: cardColor,
+                    borderLeftColor: provColor,
+                },
+                pressed && styles.cardPressed,
+            ]}
+            onPress={() => navigation.navigate('DetalleJai', { jai })}
+        >
+            <View style={styles.cardHeader}>
+                <Text style={styles.nombre}>{jai.name}</Text>
+
+                <View style={[styles.badge, { backgroundColor: provColor }]}>
+                    <Text style={styles.badgeTxt}>{jai.province}</Text>
+                </View>
+            </View>
+
+            <Text style={[styles.fecha, { color: provColor }]}>
+                {formatBasqueDateRange(jai.startDate, jai.endDate)}
+            </Text>
+
+            <Text style={styles.lugar}>
+                {jai.area} · {jai.city}
+            </Text>
+        </Pressable>
     );
 }
 
@@ -205,67 +242,86 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
-        paddingHorizontal: 16,
     },
-    header: {
-        paddingTop: 12,
-        paddingBottom: 8,
+    content: {
+        padding: 16,
+        paddingBottom: 40,
     },
-    title: {
+    hero: {
+        backgroundColor: colorJaiApp,
+        borderRadius: 24,
+        padding: 22,
+        marginBottom: 18,
+    },
+    heroTitulo: {
+        color: 'white',
         fontSize: 34,
         fontWeight: 'bold',
-        color: COLORS.primary,
     },
-    subtitle: {
+    heroSubtitulo: {
+        color: 'rgba(255,255,255,0.9)',
         fontSize: 16,
-        marginBottom: 14,
-        color: COLORS.muted,
+        marginTop: 6,
+        lineHeight: 22,
     },
-    searchBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        borderRadius: 14,
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        paddingHorizontal: 12,
-        paddingVertical: Platform.OS === 'ios' ? 10 : 4,
-        marginBottom: 12,
-    },
-    searchIcono: {
-        marginRight: 8,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 16,
-        color: COLORS.text,
-    },
-    filtros: {
+    quickGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 8,
-        marginBottom: 8,
+        gap: 12,
+        marginBottom: 22,
     },
-    chip: {
-        paddingHorizontal: 14,
-        paddingVertical: 7,
-        borderRadius: 999,
-        borderWidth: 1.5,
-        borderColor: COLORS.border,
+    quickCard: {
+        width: '48%',
         backgroundColor: 'white',
+        borderRadius: 18,
+        padding: 15,
+        borderWidth: 1,
+        borderColor: COLORS.border,
     },
-    chipTxt: {
+    quickTitle: {
+        marginTop: 8,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: COLORS.text,
+    },
+    quickText: {
+        marginTop: 3,
         fontSize: 13,
-        fontWeight: '600',
         color: COLORS.muted,
     },
-    chipTxtActivo: {
-        color: 'white',
+    section: {
+        marginBottom: 24,
     },
-    contador: {
-        fontSize: 12,
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    sectionTitle: {
+        fontSize: 21,
+        fontWeight: 'bold',
+        color: COLORS.text,
+        marginBottom: 12,
+    },
+    sectionLink: {
+        color: colorJaiApp,
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    emptyBox: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 18,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        alignItems: 'center',
+        gap: 8,
+    },
+    emptyText: {
         color: COLORS.muted,
-        marginBottom: 8,
+        textAlign: 'center',
+        fontSize: 14,
     },
     card: {
         padding: 16,
@@ -280,58 +336,59 @@ const styles = StyleSheet.create({
     },
     cardHeader: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'flex-start',
+        justifyContent: 'space-between',
         gap: 8,
     },
-    cardHeaderRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        flexShrink: 0,
-    },
-    heartIcon: {
-        marginRight: 2,
-    },
-    name: {
+    nombre: {
         flex: 1,
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: 'bold',
         color: COLORS.text,
     },
-    date: {
-        marginTop: 8,
-        fontSize: 17,
-        fontWeight: '700',
-    },
-    place: {
-        marginTop: 6,
-        fontSize: 15,
-        color: COLORS.text,
-    },
-    description: {
-        marginTop: 8,
-        fontSize: 14,
-        color: COLORS.muted,
-    },
-    provinceBadge: {
+    badge: {
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 999,
-        alignSelf: 'flex-start',
     },
-    provinceBadgeText: {
-        color: '#FFF',
+    badgeTxt: {
+        color: 'white',
         fontSize: 12,
         fontWeight: 'bold',
     },
-    vacio: {
-        alignItems: 'center',
-        marginTop: 60,
-        gap: 12,
+    fecha: {
+        marginTop: 8,
+        fontSize: 15,
+        fontWeight: '700',
     },
-    vacioTxt: {
-        fontSize: 16,
-        color: '#bbb',
+    lugar: {
+        marginTop: 5,
+        fontSize: 14,
+        color: COLORS.text,
+    },
+    provinceGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
+    },
+    provinceButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 999,
+        paddingVertical: 10,
+        paddingHorizontal: 14,
+        borderWidth: 1.5,
+        gap: 8,
+    },
+    provinceDot: {
+        width: 10,
+        height: 10,
+        borderRadius: 99,
+    },
+    provinceText: {
+        fontSize: 15,
+        fontWeight: '700',
+        color: COLORS.text,
     },
 });

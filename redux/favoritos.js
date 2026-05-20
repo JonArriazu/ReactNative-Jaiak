@@ -12,7 +12,7 @@ export const favoritos = (state = { favoritos: [] }, action) => {
         favoritos: state.favoritos.concat(action.payload),
       };
 
-    case ActionTypes.DELETE_FAVORITO:
+    case ActionTypes.REMOVE_FAVORITO:
       return {
         ...state,
         favoritos: state.favoritos.filter(
