@@ -3,3 +3,4 @@ export const ADD_JAIAK = 'ADD_JAIAK';
 export const JAIAK_FAILED = 'JAIAK_FAILED';
 export const ADD_FAVORITO = 'ADD_FAVORITO';
 export const REMOVE_FAVORITO = 'REMOVE_FAVORITO';
+export const LOAD_FAVORITOS = 'LOAD_FAVORITOS';

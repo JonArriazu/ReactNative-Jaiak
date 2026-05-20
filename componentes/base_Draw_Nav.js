@@ -9,6 +9,7 @@ import {
     DrawerItemList,
 } from '@react-navigation/drawer';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { connect } from 'react-redux';
 
 import Home from './HomeComponent';
 import DetalleJai from './DetalleJaiComponent';
@@ -17,6 +18,7 @@ import Egutegia from './EgutegiaComponent';
 import Gogokoak from './GogokoenComponent';
 
 import { colorJaiApp, colorJaiAppClaro } from '../comun/comun';
+import { loadFavoritos } from '../redux/ActionCreators';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -42,7 +44,9 @@ function CustomDrawerContent(props) {
             <View style={styles.drawerHeader}>
                 <View style={styles.drawerHeaderTextContainer}>
                     <Text style={styles.drawerHeaderText}>JaiApp</Text>
-                    <Text style={styles.drawerHeaderSubtext}>Euskal Herriko Jaiak</Text>
+                    <Text style={styles.drawerHeaderSubtext}>
+                        Euskal Herriko Jaiak
+                    </Text>
                 </View>
             </View>
 
@@ -52,6 +56,10 @@ function CustomDrawerContent(props) {
 }
 
 class Campobase extends Component {
+    componentDidMount() {
+        this.props.loadFavoritos();
+    }
+
     menuHeaderOptions = (title, navigation) => ({
         title,
         headerStyle: {
@@ -162,7 +170,11 @@ class Campobase extends Component {
                 component={this.HasieraNavegador}
                 options={{
                     drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="home" size={size} color={color} />
+                        <MaterialCommunityIcons
+                            name="home"
+                            size={size}
+                            color={color}
+                        />
                     ),
                 }}
             />
@@ -200,7 +212,11 @@ class Campobase extends Component {
                 component={this.GogokoenNavegador}
                 options={{
                     drawerIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="heart" size={size} color={color} />
+                        <MaterialCommunityIcons
+                            name="heart"
+                            size={size}
+                            color={color}
+                        />
                     ),
                 }}
             />
@@ -222,6 +238,10 @@ class Campobase extends Component {
         );
     }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+    loadFavoritos: () => dispatch(loadFavoritos()),
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -250,4 +270,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Campobase;
+export default connect(null, mapDispatchToProps)(Campobase);
