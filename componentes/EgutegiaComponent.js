@@ -10,7 +10,6 @@ import { Calendar } from 'react-native-calendars';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 
-import { jaiak } from '../comun/jaiakDatak';
 import { formatBasqueDateRange } from '../comun/dateUtils';
 import {
   COLORS,
@@ -26,6 +25,7 @@ export default function Egutegia({ navigation }) {
   const [modo, setModo] = useState('egutegia');
 
   const favoritosIds = useSelector((state) => state.favoritos.favoritos);
+  const jaiak = useSelector((state) => state.jaiak.jaiak);
 
   const jaiakFiltradas = useMemo(() => {
     if (modo === 'gogokoak') {
@@ -33,7 +33,7 @@ export default function Egutegia({ navigation }) {
     }
 
     return jaiak;
-  }, [modo, favoritosIds]);
+  }, [jaiak, modo, favoritosIds]);
 
   const jaiakPorFecha = useMemo(() => {
     const mapa = {};

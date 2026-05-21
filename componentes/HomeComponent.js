@@ -9,7 +9,6 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 
-import { jaiak } from '../comun/jaiakDatak';
 import { formatBasqueDateRange } from '../comun/dateUtils';
 import {
     COLORS,
@@ -31,7 +30,7 @@ function fiestaActivaEnFecha(jai, fechaTexto) {
     return inicio <= fecha && fin >= fecha;
 }
 
-function obtenerProximasJaiak() {
+function obtenerProximasJaiak(jaiak) {
     const hoy = obtenerHoyTexto();
 
     return jaiak
@@ -42,13 +41,14 @@ function obtenerProximasJaiak() {
 
 export default function Home({ navigation }) {
     const favoritosIds = useSelector((state) => state.favoritos.favoritos);
+    const jaiak = useSelector((state) => state.jaiak.jaiak);
 
     const jaiakHoy = useMemo(() => {
         const hoy = obtenerHoyTexto();
         return jaiak.filter((jai) => fiestaActivaEnFecha(jai, hoy));
-    }, []);
+    }, [jaiak]);
 
-    const proximasJaiak = useMemo(() => obtenerProximasJaiak(), []);
+    const proximasJaiak = useMemo(() => obtenerProximasJaiak(jaiak), [jaiak]);
 
     const abrirDrawer = (pantalla) => {
         navigation.getParent()?.navigate(pantalla);

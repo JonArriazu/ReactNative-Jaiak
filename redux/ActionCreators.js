@@ -1,27 +1,7 @@
-import * as ActionTypes from './ActionTypes';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// Re-exportamos los action creators y thunks desde los slices.
+// Asi cualquier import existente del tipo
+//   import { addFavorito, removeFavorito, loadFavoritos } from '../redux/ActionCreators'
+// sigue funcionando exactamente igual.
 
-export const addFavorito = (jaiId) => ({
-    type: ActionTypes.ADD_FAVORITO,
-    payload: jaiId,
-});
-
-export const removeFavorito = (jaiId) => ({
-    type: ActionTypes.REMOVE_FAVORITO,
-    payload: jaiId,
-});
-
-export const loadFavoritos = () => async (dispatch) => {
-  try {
-    const favoritosGuardados = await AsyncStorage.getItem('favoritos');
-
-    if (favoritosGuardados !== null) {
-      dispatch({
-        type: ActionTypes.LOAD_FAVORITOS,
-        payload: JSON.parse(favoritosGuardados),
-      });
-    }
-  } catch (error) {
-    console.log('Error cargando favoritos:', error);
-  }
-};
+export { addFavorito, removeFavorito, loadFavoritos } from './favoritos';
+export { fetchJaiak } from './jaiak';

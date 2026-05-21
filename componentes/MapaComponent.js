@@ -9,7 +9,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 
 import { colorJaiApp, PROVINCE_COLORS } from '../comun/comun';
-import { jaiak } from '../comun/jaiakDatak';
 import { getCoordenadas } from '../comun/coordenadasHerria';
 import { formatBasqueDateRange } from '../comun/dateUtils';
 
@@ -161,6 +160,7 @@ export default function Mapa() {
     const [seleccion, setSeleccion] = useState(null);
 
     const favoritosIds = useSelector(s => s.favoritos.favoritos);
+    const jaiak = useSelector(s => s.jaiak.jaiak);
 
     // Preparar marcadores con coordenadas
     const markers = useMemo(() => {
@@ -171,7 +171,7 @@ export default function Mapa() {
             ...j,
             coords: getCoordenadas(j.area, j.city, j.province),
         }));
-    }, [filtro, favoritosIds]);
+    }, [jaiak, filtro, favoritosIds]);
 
     useEffect(() => { solicitarUbicacion(); }, []);
 

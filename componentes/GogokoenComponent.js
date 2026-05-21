@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { jaiak } from '../comun/jaiakDatak';
 import { formatBasqueDateRange } from '../comun/dateUtils';
 import { COLORS, PROVINCE_COLORS, PROVINCE_LIGHT_COLORS } from '../comun/comun';
 
 export default function Gogokoak({ navigation }) {
     const favoritosIds = useSelector(s => s.favoritos.favoritos);
+    const jaiak = useSelector(s => s.jaiak.jaiak);
 
     const gogokoak = jaiak
         .filter(j => favoritosIds.includes(j.id))

@@ -19,7 +19,7 @@ import Egutegia from './EgutegiaComponent';
 import Gogokoak from './GogokoenComponent';
 
 import { colorJaiApp, colorJaiAppClaro } from '../comun/comun';
-import { loadFavoritos } from '../redux/ActionCreators';
+import { loadFavoritos, fetchJaiak } from '../redux/ActionCreators';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -59,6 +59,7 @@ function CustomDrawerContent(props) {
 class Campobase extends Component {
     componentDidMount() {
         this.props.loadFavoritos();
+        this.props.fetchJaiak();
     }
 
     menuHeaderOptions = (title, navigation) => ({
@@ -273,6 +274,7 @@ class Campobase extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
     loadFavoritos: () => dispatch(loadFavoritos()),
+    fetchJaiak: () => dispatch(fetchJaiak()),
 });
 
 const styles = StyleSheet.create({

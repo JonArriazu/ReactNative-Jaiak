@@ -9,8 +9,8 @@ import {
     TextInput,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
-import { jaiak } from '../comun/jaiakDatak';
 import { formatBasqueDateRange } from '../comun/dateUtils';
 import {
     COLORS,
@@ -26,6 +26,8 @@ export default function Bilatzailea({ navigation, route }) {
     const [texto, setTexto] = useState('');
     const [provincia, setProvincia] = useState(provinciaInicial);
 
+    const jaiak = useSelector((state) => state.jaiak.jaiak);
+
     const jaiakFiltradas = useMemo(() => {
         return jaiak
             .filter((jai) => {
@@ -40,7 +42,7 @@ export default function Bilatzailea({ navigation, route }) {
                 return coincideTexto && coincideProvincia;
             })
             .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-    }, [texto, provincia]);
+    }, [jaiak, texto, provincia]);
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
