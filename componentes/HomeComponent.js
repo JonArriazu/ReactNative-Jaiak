@@ -183,7 +183,7 @@ export default function Home({ navigation }) {
                                 onPress={() =>
                                     navigation.getParent()?.navigate('Bilatzailea', {
                                         screen: 'BilatzaileaPantaila',
-                                        params: { province },
+                                        params: { province: province },
                                     })
                                 }
                             >

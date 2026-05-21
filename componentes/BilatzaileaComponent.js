@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     View,
     Text,
@@ -28,6 +28,12 @@ export default function Bilatzailea({ navigation, route }) {
 
     const jaiak = useSelector((state) => state.jaiak.jaiak);
 
+    useEffect(() => {
+        if (route.params?.province) {
+            setProvincia(route.params.province);
+        }
+    }, [route.params?.province]);
+
     const jaiakFiltradas = useMemo(() => {
         return jaiak
             .filter((jai) => {
@@ -44,115 +50,136 @@ export default function Bilatzailea({ navigation, route }) {
             .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     }, [jaiak, texto, provincia]);
 
-    return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            <View style={styles.header}>
-                <Text style={styles.titulo}>Bilatzailea</Text>
-                <Text style={styles.subtitulo}>
-                    Bilatu jaiak izenaren, herriaren edo probintziaren arabera.
-                </Text>
-            </View>
+    const renderJai = ({ item: jai }) => {
+        const provColor = PROVINCE_COLORS[jai.province] || COLORS.primary;
+        const cardColor = PROVINCE_LIGHT_COLORS[jai.province] || COLORS.card;
 
-            <View style={styles.searchBox}>
-                <MaterialCommunityIcons
-                    name="magnify"
-                    size={22}
-                    color={COLORS.muted}
-                />
-
-                <TextInput
-                    style={styles.input}
-                    placeholder="Bilatu jai bat..."
-                    value={texto}
-                    onChangeText={setTexto}
-                    placeholderTextColor={COLORS.muted}
-                />
-
-                {texto.length > 0 && (
-                    <Pressable onPress={() => setTexto('')}>
-                        <MaterialCommunityIcons
-                            name="close-circle"
-                            size={20}
-                            color={COLORS.muted}
-                        />
-                    </Pressable>
-                )}
-            </View>
-
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.filtros}
+        return (
+            <Pressable
+                style={({ pressed }) => [
+                    styles.card,
+                    {
+                        backgroundColor: cardColor,
+                        borderLeftColor: provColor,
+                    },
+                    pressed && styles.cardPressed,
+                ]}
+                onPress={() => navigation.navigate('DetalleJai', { jai })}
             >
-                {['Denak', ...PROVINCES].map((item) => {
-                    const activo = provincia === item;
-                    const color =
-                        item === 'Denak'
-                            ? colorJaiApp
-                            : PROVINCE_COLORS[item] || colorJaiApp;
+                <View style={styles.cardHeader}>
+                    <Text style={styles.nombre}>{jai.name}</Text>
 
-                    return (
-                        <Pressable
-                            key={item}
-                            style={[
-                                styles.filtro,
-                                activo && { backgroundColor: color },
-                            ]}
-                            onPress={() => setProvincia(item)}
-                        >
-                            <Text
-                                style={[
-                                    styles.filtroTexto,
-                                    activo && styles.filtroTextoActivo,
-                                ]}
-                            >
-                                {item}
+                    <View style={[styles.badge, { backgroundColor: provColor }]}>
+                        <Text style={styles.badgeTxt}>{jai.province}</Text>
+                    </View>
+                </View>
+
+                <Text style={[styles.fecha, { color: provColor }]}>
+                    {formatBasqueDateRange(jai.startDate, jai.endDate)}
+                </Text>
+
+                <Text style={styles.lugar}>
+                    {jai.area} · {jai.city}
+                </Text>
+            </Pressable>
+        );
+    };
+
+    return (
+        <View style={styles.container}>
+            <FlatList
+                data={jaiakFiltradas}
+                keyExtractor={(item) => item.id}
+                renderItem={renderJai}
+                contentContainerStyle={styles.content}
+                ListHeaderComponent={
+                    <>
+                        <View style={styles.header}>
+                            <Text style={styles.titulo}>Bilatzailea</Text>
+                            <Text style={styles.subtitulo}>
+                                Bilatu jaiak izenaren, herriaren edo probintziaren arabera.
                             </Text>
-                        </Pressable>
-                    );
-                })}
-            </ScrollView>
-
-            <Text style={styles.resultadoTitulo}>
-                {jaiakFiltradas.length} jai aurkitu dira
-            </Text>
-
-            {jaiakFiltradas.map((jai) => {
-                const provColor = PROVINCE_COLORS[jai.province] || COLORS.primary;
-                const cardColor = PROVINCE_LIGHT_COLORS[jai.province] || COLORS.card;
-
-                return (
-                    <Pressable
-                        key={jai.id}
-                        style={({ pressed }) => [
-                            styles.card,
-                            {
-                                backgroundColor: cardColor,
-                                borderLeftColor: provColor,
-                            },
-                            pressed && styles.cardPressed,
-                        ]}
-                        onPress={() => navigation.navigate('DetalleJai', { jai })}
-                    >
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.nombre}>{jai.name}</Text>
-
-                            <View style={[styles.badge, { backgroundColor: provColor }]}>
-                                <Text style={styles.badgeTxt}>{jai.province}</Text>
-                            </View>
                         </View>
 
-                        <Text style={[styles.fecha, { color: provColor }]}>
-                            {formatBasqueDateRange(jai.startDate, jai.endDate)}
-                        </Text>
+                        <View style={styles.searchBox}>
+                            <MaterialCommunityIcons
+                                name="magnify"
+                                size={22}
+                                color={COLORS.muted}
+                            />
 
-                        <Text style={styles.lugar}>
-                            {jai.area} · {jai.city}
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Bilatu jai bat..."
+                                value={texto}
+                                onChangeText={setTexto}
+                                placeholderTextColor={COLORS.muted}
+                            />
+
+                            {texto.length > 0 && (
+                                <Pressable onPress={() => setTexto('')}>
+                                    <MaterialCommunityIcons
+                                        name="close-circle"
+                                        size={20}
+                                        color={COLORS.muted}
+                                    />
+                                </Pressable>
+                            )}
+                        </View>
+
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={styles.filtros}
+                        >
+                            {['Denak', ...PROVINCES].map((item) => {
+                                const activo = provincia === item;
+                                const color =
+                                    item === 'Denak'
+                                        ? colorJaiApp
+                                        : PROVINCE_COLORS[item] || colorJaiApp;
+
+                                return (
+                                    <Pressable
+                                        key={item}
+                                        style={[
+                                            styles.filtro,
+                                            activo && { backgroundColor: color },
+                                        ]}
+                                        onPress={() => setProvincia(item)}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.filtroTexto,
+                                                activo && styles.filtroTextoActivo,
+                                            ]}
+                                        >
+                                            {item}
+                                        </Text>
+                                    </Pressable>
+                                );
+                            })}
+                        </ScrollView>
+
+                        <Text style={styles.resultadoTitulo}>
+                            {jaiakFiltradas.length} jai aurkitu dira
                         </Text>
-                    </Pressable>
-                );
-            })}
-        </ScrollView>
+                    </>
+                }
+                ListEmptyComponent={
+                    <View style={styles.vacio}>
+                        <MaterialCommunityIcons
+                            name="calendar-remove"
+                            size={42}
+                            color={COLORS.muted}
+                        />
+                        <Text style={styles.vacioTexto}>
+                            Ez da jairik aurkitu.
+                        </Text>
+                    </View>
+                }
+            />
+        </View>
     );
 }
 
@@ -263,5 +290,14 @@ const styles = StyleSheet.create({
         marginTop: 5,
         fontSize: 14,
         color: COLORS.text,
+    },
+    vacio: {
+        alignItems: 'center',
+        marginTop: 40,
+        gap: 10,
+    },
+    vacioTexto: {
+        color: COLORS.muted,
+        fontSize: 15,
     },
 });
