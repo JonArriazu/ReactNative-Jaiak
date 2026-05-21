@@ -21,3 +21,8 @@ yarn-error.*
 *.tsbuildinfo
 /ios
 /android
+
+# Firebase
+serviceAccountKey.json
+firebase-debug.log
+.firebase/
